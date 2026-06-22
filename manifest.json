@@ -1,0 +1,18 @@
+{
+  "name": "QG Finances",
+  "short_name": "+ Transaction",
+  "description": "Ajouter une transaction",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0d1b2a",
+  "theme_color": "#6c5fc7",
+  "icons": [
+    {
+      "src": "./icons/add-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
