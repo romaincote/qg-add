@@ -2,6 +2,7 @@
   "name": "QG Exercices",
   "short_name": "+ Exercices",
   "description": "Enregistrer les reps du matin",
+  "id": "./",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
