@@ -1,0 +1,18 @@
+{
+  "name": "QG Exercices",
+  "short_name": "+ Exercices",
+  "description": "Enregistrer les reps du matin",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0d1b2a",
+  "theme_color": "#6c5fc7",
+  "icons": [
+    {
+      "src": "./icons/add-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

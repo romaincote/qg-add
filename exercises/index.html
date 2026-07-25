@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#6c5fc7">
+  <title>+ Exercices</title>
+  <link rel="manifest" href="./manifest.json">
+  <style>
+    :root {
+      --bg:       #0d1b2a;
+      --bg-2:     #162538;
+      --bg-3:     #1e3249;
+      --border:   rgba(96,165,250,0.12);
+      --text:     #ddeaf7;
+      --text-2:   #7a9ab8;
+      --text-3:   #3d5a73;
+      --accent:   #2dd4bf;
+      --green:    #34d399;
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg:     #edeae4;
+        --bg-2:   #fdfcfb;
+        --bg-3:   #f4f1eb;
+        --border: #dedad3;
+        --text:   #1a1814;
+        --text-2: #6b6560;
+        --text-3: #a8a39c;
+        --accent: #6c5fc7;
+        --green:  #2fb87e;
+      }
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 14px 16px;
+      padding-top: max(14px, env(safe-area-inset-top));
+      padding-bottom: max(20px, env(safe-area-inset-bottom));
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .header-logo {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, #7c6fd4 0%, #5c4fc0 100%);
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px; color: #fff;
+    }
+    .header h1 { font-size: 17px; font-weight: 600; }
+    .date-label {
+      font-size: 12px;
+      color: var(--text-2);
+      margin-bottom: 16px;
+    }
+    .field { margin-bottom: 13px; }
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-2);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 5px;
+    }
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 16px;
+      font-family: inherit;
+    }
+    input:focus { outline: none; border-color: var(--accent); }
+    .save-btn {
+      width: 100%;
+      padding: 14px;
+      margin-top: 8px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .save-btn:disabled { opacity: 0.6; }
+    .feedback {
+      display: none;
+      margin-top: 14px;
+      padding: 10px 14px;
+      background: var(--green);
+      color: #fff;
+      border-radius: 10px;
+      font-size: 13px;
+      text-align: center;
+    }
+    .feedback.show { display: block; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-logo">QG</div>
+    <h1>Exercices du matin</h1>
+  </div>
+  <div class="date-label" id="date-label"></div>
+
+  <div class="field">
+    <label>Push-ups</label>
+    <input id="ex-pushups" type="number" min="0" inputmode="numeric" value="0">
+  </div>
+  <div class="field">
+    <label>Dips</label>
+    <input id="ex-dips" type="number" min="0" inputmode="numeric" value="0">
+  </div>
+  <div class="field">
+    <label>Pull-ups</label>
+    <input id="ex-pullups" type="number" min="0" inputmode="numeric" value="0">
+  </div>
+  <div class="field">
+    <label>Reverse crunch</label>
+    <input id="ex-reverse_crunch" type="number" min="0" inputmode="numeric" value="0">
+  </div>
+
+  <button class="save-btn" id="save-btn" onclick="saveReps()">Enregistrer</button>
+  <div class="feedback" id="feedback">Enregistré ✓</div>
+
+  <script>
+    // Baked in at build time by Projects/Active/qg-add/build.py from the
+    // HABITS_APPS_SCRIPT_URL / HABITS_APPS_SCRIPT_SECRET env vars — same
+    // Apps Script relay the Android habit widgets POST to. See
+    // Projects/Active/habits-inbox/SETUP.md.
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxXsMalxgRcDXiO2FyJQavbSEzmXDk2FfOFFzjROGUPC_kqNOjquGYsZY7JJi7JxgwLwA/exec';
+    const APPS_SCRIPT_SECRET = '682200d9350d03d8199bc20e804ff7daca470a515';
+
+    function todayToronto() {
+      return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Toronto' });
+    }
+
+    document.getElementById('date-label').textContent = todayToronto();
+
+    async function saveReps() {
+      const btn = document.getElementById('save-btn');
+      btn.disabled = true;
+
+      const value = {
+        pushups:        parseInt(document.getElementById('ex-pushups').value) || 0,
+        dips:            parseInt(document.getElementById('ex-dips').value) || 0,
+        pullups:         parseInt(document.getElementById('ex-pullups').value) || 0,
+        reverse_crunch:  parseInt(document.getElementById('ex-reverse_crunch').value) || 0,
+      };
+
+      try {
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: JSON.stringify({
+            secret: APPS_SCRIPT_SECRET,
+            habit: 'morning_exercises_reps',
+            date: todayToronto(),
+            value: JSON.stringify(value),
+          }),
+        });
+      } catch (_) {
+        // no-cors + offline: nothing readable to check; best-effort only.
+      }
+
+      const fb = document.getElementById('feedback');
+      fb.classList.add('show');
+      setTimeout(() => fb.classList.remove('show'), 2500);
+      btn.disabled = false;
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js');
+    }
+  </script>
+</body>
+</html>
