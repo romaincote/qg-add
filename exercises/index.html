@@ -7,7 +7,6 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#6c5fc7">
   <title>+ Exercices</title>
-  <link rel="manifest" href="./manifest.json">
   <style>
     :root {
       --bg:       #0d1b2a;
@@ -139,11 +138,12 @@
 
   <script>
     // Baked in at build time by Projects/Active/qg-add/build.py from the
-    // HABITS_APPS_SCRIPT_URL / HABITS_APPS_SCRIPT_SECRET env vars — same
-    // Apps Script relay the Android habit widgets POST to. See
-    // Projects/Active/habits-inbox/SETUP.md.
+    // HABITS_APPS_SCRIPT_URL env var — same Apps Script relay the Android
+    // habit widgets POST to. See Projects/Active/habits-inbox/SETUP.md.
+    // No secret: this page is public/unencrypted, so a baked-in secret would
+    // just be plaintext in the repo — the long random /exec URL is the gate,
+    // same trust model as the existing finances Apps Script relay.
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxXsMalxgRcDXiO2FyJQavbSEzmXDk2FfOFFzjROGUPC_kqNOjquGYsZY7JJi7JxgwLwA/exec';
-    const APPS_SCRIPT_SECRET = '682200d9350d03d8199bc20e804ff7daca470a515';
 
     function todayToronto() {
       return new Date().toLocaleDateString('en-CA', { timeZone: 'America/Toronto' });
@@ -167,7 +167,6 @@
           method: 'POST',
           mode: 'no-cors',
           body: JSON.stringify({
-            secret: APPS_SCRIPT_SECRET,
             habit: 'morning_exercises_reps',
             date: todayToronto(),
             value: JSON.stringify(value),
@@ -181,10 +180,6 @@
       fb.classList.add('show');
       setTimeout(() => fb.classList.remove('show'), 2500);
       btn.disabled = false;
-    }
-
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js');
     }
   </script>
 </body>
